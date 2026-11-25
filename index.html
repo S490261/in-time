@@ -338,6 +338,115 @@
         gap: 12px;
       }
 
+      .settings-dialog {
+        width: min(600px, calc(100% - 24px));
+        max-height: calc(100% - 24px);
+        padding: 0;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        color: var(--text);
+        background: var(--panel);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+      }
+
+      .settings-dialog::backdrop { background: rgba(31, 25, 26, 0.5); }
+      .settings-form { padding: 26px 28px 24px; border-top: 4px solid var(--accent); }
+      .settings-heading { display: flex; align-items: center; gap: 14px; }
+      .settings-heading .brand-mark { width: 44px; height: 44px; }
+      .settings-heading .brand-mark svg { width: 21px; height: 21px; }
+      .settings-heading .brand-eyebrow { margin-bottom: 4px; }
+      .settings-dialog h2 { margin: 0; font-size: 21px; letter-spacing: -0.035em; }
+      .settings-description { margin: 16px 0 0; }
+      .settings-grid {
+        display: grid;
+        margin-top: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+      }
+      .settings-row {
+        display: grid;
+        grid-template-columns: minmax(96px, 0.85fr) repeat(2, minmax(0, 1fr));
+        align-items: center;
+        gap: 12px;
+        padding: 11px 14px;
+        background: #ffffff;
+      }
+      .settings-row + .settings-row { border-top: 1px solid #eeeeee; }
+      .settings-row:hover { background: #fcf8f8; }
+      .settings-day { display: flex; align-items: center; gap: 9px; min-width: 0; }
+      .settings-day-index {
+        color: var(--accent);
+        font: 700 10px 'JetBrains Mono', monospace;
+      }
+      .settings-day strong { font-size: 13px; letter-spacing: -0.01em; }
+      .settings-row label {
+        min-width: 0;
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+      .settings-input {
+        display: flex;
+        align-items: center;
+        margin-top: 5px;
+        border: 1px solid #d5d5d5;
+        border-radius: 3px;
+        background: #ffffff;
+        transition: border-color 180ms ease, box-shadow 180ms ease;
+      }
+      .settings-input:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(215, 25, 33, 0.12);
+      }
+      .settings-row input {
+        width: 100%;
+        min-width: 0;
+        padding: 8px 10px;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text);
+        font: 700 13px 'JetBrains Mono', monospace;
+      }
+      .settings-unit {
+        padding-right: 10px;
+        color: #888888;
+        font-size: 10px;
+        font-weight: 600;
+      }
+      .settings-error {
+        margin: 14px 0 0;
+        padding: 10px 12px;
+        border-left: 3px solid var(--accent);
+        background: var(--accent-soft);
+        color: var(--accent-bright);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .settings-error:empty { display: none; }
+      .settings-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+      .settings-actions button {
+        padding: 10px 17px;
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        background: var(--panel);
+        color: var(--text);
+        font: inherit;
+        font-size: 12px;
+        font-weight: 650;
+        cursor: pointer;
+      }
+      .settings-actions button:hover { background: var(--panel-soft); }
+      .settings-actions button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+      .settings-actions button[type="submit"] {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: #ffffff;
+      }
+      .settings-actions button[type="submit"]:hover { background: var(--accent-bright); }
+
       textarea::placeholder {
         color: #999999;
       }
@@ -472,6 +581,14 @@
       }
 
       @media (max-width: 380px) {
+        .settings-form { padding: 22px 14px 18px; }
+        .settings-row { grid-template-columns: minmax(75px, 0.85fr) repeat(2, minmax(0, 1fr)); gap: 7px; padding: 10px 8px; }
+        .settings-day { gap: 5px; }
+        .settings-day-index { display: none; }
+        .settings-day strong { font-size: 11px; }
+        .settings-row input { padding: 8px 6px; }
+        .settings-unit { padding-right: 6px; }
+
         .brand {
           gap: 11px;
         }
@@ -540,6 +657,12 @@
             </div>
             <span class="timer-indicator" aria-hidden="true"></span>
           </div>
+          <button id="settings-button" class="icon-button" type="button" title="Weekday settings" aria-label="Weekday settings">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.7" />
+              <path d="M10 2h4l.5 2.2 1.6.7L18 3.7l2.8 2.8-1.2 1.9.7 1.6 2.2.5v3l-2.2.5-.7 1.6 1.2 1.9-2.8 2.8-1.9-1.2-1.6.7L14 22h-4l-.5-2.2-1.6-.7L6 20.3l-2.8-2.8 1.2-1.9-.7-1.6-2.2-.5v-3l2.2-.5.7-1.6-1.2-1.9L6 3.7l1.9 1.2 1.6-.7L10 2Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+            </svg>
+          </button>
           <button id="compact-button" class="icon-button" type="button" title="Show compact widget" aria-label="Show compact widget">
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
@@ -552,7 +675,7 @@
         <div class="input-heading">
           <div>
             <label for="message">Attendance log</label>
-            <p class="section-hint">Paste timestamps in order. Your entries are saved and restored automatically.</p>
+            <p class="section-hint">Paste timestamps in order. Entries are saved for today and cleared on a new day.</p>
           </div>
           <span class="saved-badge">AUTO-SAVED</span>
         </div>
@@ -562,6 +685,30 @@
       </div>
     </div>
 
+    <dialog id="settings-dialog" class="settings-dialog" aria-labelledby="settings-title">
+      <form id="settings-form" class="settings-form" novalidate>
+        <div class="settings-heading">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5" />
+              <path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </span>
+          <div>
+            <span class="brand-eyebrow">PERSONAL TIMEKEEPER</span>
+            <h2 id="settings-title">Weekday settings</h2>
+          </div>
+        </div>
+        <p class="section-hint settings-description">Enter hours from 0 to 24 as decimals, such as 6.5 for 6 hours 30 minutes. Allowed out time sets the minimum elapsed time; extra out time extends the required exit.</p>
+        <div id="settings-grid" class="settings-grid"></div>
+        <p id="settings-error" class="settings-error" role="alert"></p>
+        <div class="settings-actions">
+          <button id="settings-cancel" type="button">Cancel</button>
+          <button type="submit">Save settings</button>
+        </div>
+      </form>
+    </dialog>
+
     <script>
       const textarea = document.getElementById('message');
       const resultBox = document.getElementById('result');
@@ -570,21 +717,113 @@
       const miniExit = document.getElementById('mini-exit');
       const DATE_MATCHER = /\b(?:\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}|\d{2}-\d{2}-\d{2}\s+\d{1,2}:\d{2}:\d{2}\s*[AP]M|\d{1,2}:\d{2})\b/gi;
       const STORAGE_KEY = 'attendanceLog';
+      const STORAGE_DATE_KEY = 'attendanceLogDate';
+      const SETTINGS_KEY = 'weekdayTimeSettings';
+      const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+      const defaultSettings = weekdays.map((day) => ({
+        inHours: day === 'Friday' ? 6.5 : 8.5,
+        outHours: day === 'Friday' ? 1.5 : 0
+      }));
+      const settingsDialog = document.getElementById('settings-dialog');
+      const settingsForm = document.getElementById('settings-form');
+      const settingsGrid = document.getElementById('settings-grid');
+      const settingsError = document.getElementById('settings-error');
+      let weekdaySettings = defaultSettings.map((settings) => ({ ...settings }));
+      let settingsLoadError = '';
+
+      const validHours = (value) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 24;
+      const readSettings = (storedSettings) => {
+        if (storedSettings === null) return defaultSettings.map((settings) => ({ ...settings }));
+        const parsed = JSON.parse(storedSettings);
+        if (!Array.isArray(parsed) || parsed.length !== weekdays.length ||
+            !parsed.every((settings) => settings && validHours(settings.inHours) && validHours(settings.outHours))) {
+          throw new Error('Invalid saved weekday settings');
+        }
+        return parsed;
+      };
+      try {
+        weekdaySettings = readSettings(localStorage.getItem(SETTINGS_KEY));
+      } catch (error) {
+        console.error('Could not load weekday settings:', error);
+        settingsLoadError = 'Could not load saved settings. Current values are shown; save them to replace the saved settings.';
+      }
+
+      settingsGrid.innerHTML = weekdays.map((day, index) => `
+        <div class="settings-row">
+          <div class="settings-day"><span class="settings-day-index" aria-hidden="true">0${index + 1}</span><strong>${day}</strong></div>
+          <label for="in-hours-${index}">IN TIME
+            <span class="settings-input">
+              <input id="in-hours-${index}" type="text" inputmode="decimal" autocomplete="off" aria-label="${day} in time (hours)" required />
+              <span class="settings-unit" aria-hidden="true">hrs</span>
+            </span>
+          </label>
+          <label for="out-hours-${index}">ALLOWED OUT
+            <span class="settings-input">
+              <input id="out-hours-${index}" type="text" inputmode="decimal" autocomplete="off" aria-label="${day} allowed out (hours)" required />
+              <span class="settings-unit" aria-hidden="true">hrs</span>
+            </span>
+          </label>
+        </div>
+      `).join('');
+
+      document.getElementById('settings-button').addEventListener('click', () => {
+        weekdaySettings.forEach((settings, index) => {
+          document.getElementById(`in-hours-${index}`).value = settings.inHours;
+          document.getElementById(`out-hours-${index}`).value = settings.outHours;
+        });
+        settingsError.textContent = settingsLoadError;
+        settingsDialog.showModal();
+      });
+      document.getElementById('settings-cancel').addEventListener('click', () => settingsDialog.close());
+      settingsForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const updated = [];
+        for (let index = 0; index < weekdays.length; index++) {
+          const inInput = document.getElementById(`in-hours-${index}`);
+          const outInput = document.getElementById(`out-hours-${index}`);
+          const readHours = (input) => {
+            const value = input.value.trim();
+            return /^(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) ? Number(value) : NaN;
+          };
+          const inHours = readHours(inInput);
+          const outHours = readHours(outInput);
+          if (!validHours(inHours) || !validHours(outHours)) {
+            settingsError.textContent = `${weekdays[index]}: enter hours between 0 and 24 in both fields.`;
+            (!validHours(inHours) ? inInput : outInput).focus();
+            return;
+          }
+          updated.push({ inHours, outHours });
+        }
+        try {
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
+        } catch (error) {
+          console.error('Could not save weekday settings:', error);
+          settingsError.textContent = 'Could not save settings. Check browser storage and try again.';
+          return;
+        }
+        weekdaySettings = updated;
+        settingsLoadError = '';
+        settingsDialog.close();
+        updateResult();
+      });
 
       // Countdown timer functionality
       let countdownInterval;
-      
+      const showTimeLeft = (totalSeconds) => {
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        const pad = (value) => String(value).padStart(2, '0');
+        countdownDisplay.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        miniLeft.textContent = countdownDisplay.textContent;
+      };
+
       const startCountdown = (durationSeconds) => {
         clearInterval(countdownInterval);
         let remainingSeconds = durationSeconds;
         
         const updateCountdown = () => {
-          const hours = Math.floor(remainingSeconds / 3600);
-          const minutes = Math.floor((remainingSeconds % 3600) / 60);
-          const seconds = remainingSeconds % 60;
-          const pad = (value) => String(value).padStart(2, '0');
-          countdownDisplay.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-          miniLeft.textContent = countdownDisplay.textContent;
+          showTimeLeft(remainingSeconds);
           
           if (remainingSeconds > 0) {
             remainingSeconds--;
@@ -598,9 +837,6 @@
         updateCountdown();
         countdownInterval = setInterval(updateCountdown, 1000);
       };
-
-      // Start with a default countdown
-      startCountdown(480); // 8 hours = 28800 seconds (default work day)
 
       const parseDateTime = (value) => {
         const timeOnly = value.match(/^(\d{1,2}):(\d{2})$/);
@@ -643,10 +879,10 @@
         return total + diffSeconds(previousOut, row.inTime);
       }, 0);
 
-      const getExpectedTargetMinutes = (dateValue) => {
-        const date = parseDateTime(dateValue);
-        if (!date) return 510;
-        return date.getDay() === 5 ? 480 : 510;
+      const getDaySettings = (dateValue) => {
+        const date = dateValue instanceof Date ? dateValue : parseDateTime(dateValue);
+        const day = date ? date.getDay() : 0;
+        return weekdaySettings[day - 1] || { inHours: 8.5, outHours: 0 };
       };
 
       const getRequiredLastOut = (rows) => {
@@ -656,9 +892,10 @@
         if (!firstIn) return null;
 
         const totalOutSeconds = getOutElapsedSeconds(rows);
-        const adjustedOutSeconds = firstIn.getDay() === 5 ? Math.max(0, totalOutSeconds - 90 * 60) : totalOutSeconds;
-        const targetMinutes = getExpectedTargetMinutes(rows[0].inTime);
-        const requiredOut = new Date(firstIn.getTime() + adjustedOutSeconds * 1000 + targetMinutes * 60000);
+        const { inHours, outHours } = getDaySettings(rows[0].inTime);
+        const inSeconds = Math.round(inHours * 3600);
+        const allowedOutSeconds = Math.round(outHours * 3600);
+        const requiredOut = new Date(firstIn.getTime() + (inSeconds + Math.max(totalOutSeconds, allowedOutSeconds)) * 1000);
         return formatDateTimeForDisplay(requiredOut);
       };
 
@@ -697,12 +934,16 @@
         const text = textarea.value.trim();
         miniExit.textContent = '--:--';
         if (!text) {
+          clearInterval(countdownInterval);
+          showTimeLeft(Math.round(getDaySettings(new Date()).inHours * 3600));
           resultBox.innerHTML = 'No data yet.';
           return;
         }
 
         const rows = parseInOut(text);
         if (!rows.length) {
+          clearInterval(countdownInterval);
+          showTimeLeft(Math.round(getDaySettings(new Date()).inHours * 3600));
           resultBox.innerHTML = '<div class="result"><strong>No valid in/out timestamps found.</strong></div>';
           return;
         }
@@ -721,12 +962,13 @@
         const totalOutSeconds = getOutElapsedSeconds(rows);
         const requiredLastOut = getRequiredLastOut(rows);
         if (requiredLastOut) miniExit.textContent = requiredLastOut.slice(11, 16);
-        const expectedTargetMinutes = getExpectedTargetMinutes(rows[0].inTime);
-        const expectedHours = Math.floor(expectedTargetMinutes / 60);
-        const expectedMinutes = expectedTargetMinutes % 60;
+        const { inHours, outHours } = getDaySettings(rows[0].inTime);
+        const expectedSeconds = Math.round(inHours * 3600);
+        const allowedOutSeconds = Math.round(outHours * 3600);
 
         // Update countdown with remaining time
-        const remainingSeconds = Math.max(0, expectedTargetMinutes * 60 - totalInSeconds);
+        const remainingSeconds = Math.max(0, expectedSeconds - totalInSeconds,
+          expectedSeconds + allowedOutSeconds - totalInSeconds - totalOutSeconds);
         startCountdown(remainingSeconds);
 
         resultBox.innerHTML = `
@@ -750,7 +992,7 @@
               </tr>
               <tr>
                 <td><strong>Expected</strong></td>
-                <td colspan="2">${expectedHours}h ${expectedMinutes}m</td>
+                <td colspan="2">${formatSummary(expectedSeconds)}</td>
               </tr>
               <tr>
                 <td><strong>Required Last Out</strong></td>
@@ -761,11 +1003,63 @@
         `;
       };
 
+      const localDateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+      let displayedDay;
+      let dayChangeTimeout;
+
+      const refreshDay = () => {
+        const now = new Date();
+        const today = localDateKey(now);
+        let savedDay = localStorage.getItem(STORAGE_DATE_KEY);
+        let savedLog = localStorage.getItem(STORAGE_KEY) || '';
+
+        if (!savedDay) {
+          const datedEntries = [...savedLog.matchAll(DATE_MATCHER)]
+            .map((match) => match[0])
+            .filter((value) => !/^\d{1,2}:\d{2}$/.test(value));
+          const lastDate = datedEntries.length ? parseDateTime(datedEntries[datedEntries.length - 1]) : null;
+          savedDay = lastDate ? localDateKey(lastDate) : today;
+        }
+        if (savedDay !== today) {
+          savedLog = '';
+          localStorage.setItem(STORAGE_KEY, '');
+        }
+        if (localStorage.getItem(STORAGE_DATE_KEY) !== today) {
+          localStorage.setItem(STORAGE_DATE_KEY, today);
+        }
+        if (displayedDay !== today) {
+          textarea.value = savedLog;
+          displayedDay = today;
+          updateResult();
+        }
+
+        clearTimeout(dayChangeTimeout);
+        const nextDay = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        dayChangeTimeout = setTimeout(refreshDay, nextDay.getTime() - now.getTime() + 10);
+      };
+
+      textarea.addEventListener('focus', refreshDay);
       textarea.addEventListener('input', () => {
         localStorage.setItem(STORAGE_KEY, textarea.value);
         updateResult();
       });
       textarea.addEventListener('paste', () => setTimeout(updateResult, 10));
+      window.addEventListener('storage', (event) => {
+        if (event.storageArea === localStorage && event.key === STORAGE_DATE_KEY) refreshDay();
+        if (event.storageArea !== localStorage || (event.key !== SETTINGS_KEY && event.key !== null)) return;
+        try {
+          weekdaySettings = readSettings(event.newValue);
+          settingsLoadError = '';
+          updateResult();
+          if (settingsDialog.open) {
+            settingsError.textContent = 'Settings changed in another tab. Cancel and reopen to see them, or save to overwrite them.';
+          }
+        } catch (error) {
+          console.error('Could not load weekday settings:', error);
+          settingsLoadError = 'Could not load saved settings. Current values are shown; save them to replace the saved settings.';
+          if (settingsDialog.open) settingsError.textContent = settingsLoadError;
+        }
+      });
       const setCompact = (compact) => {
         document.body.classList.toggle('compact', compact);
         if (!compact) textarea.focus();
@@ -774,11 +1068,13 @@
       document.getElementById('compact-button').addEventListener('click', () => setCompact(true));
       // Recalculate when returning to the window so open sessions and time-only entries stay current.
       document.addEventListener('visibilitychange', () => {
-        if (!document.hidden) updateResult();
+        if (!document.hidden) {
+          refreshDay();
+          updateResult();
+        }
       });
 
-      textarea.value = localStorage.getItem(STORAGE_KEY) || '';
-      updateResult();
+      refreshDay();
     </script>
   </body>
 </html>
