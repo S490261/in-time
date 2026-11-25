@@ -1,11 +1,784 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Hello, world!</title>
-</head>
-<body>
-  <h1>Hello, world!</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>In Time Calculation</title>
+    <meta name="apple-mobile-web-app-title" content="In Time" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="icon" type="image/png" href="icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        color-scheme: light;
+        --page: #f6f6f6;
+        --panel: #ffffff;
+        --panel-soft: #f2f2f2;
+        --text: #333333;
+        --muted: #666666;
+        --border: #d8d8d8;
+        --accent: #d71921;
+        --accent-bright: #b5121b;
+        --accent-soft: #f9e6e9;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100svh;
+        display: grid;
+        place-items: center;
+        padding: 32px 18px;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--page);
+        color: var(--text);
+      }
+
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+      }
+
+      .container {
+        width: min(900px, 100%);
+        overflow: hidden;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+        position: relative;
+      }
+
+      .header {
+        position: relative;
+        padding: 28px 32px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 24px;
+        border-bottom: 1px solid var(--border);
+        background: #ffffff;
+      }
+
+      .header::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto;
+        height: 4px;
+        background: var(--accent);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 16px;
+        min-width: 0;
+      }
+
+      .brand-mark {
+        width: 52px;
+        height: 52px;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        border: 1px solid rgba(215, 25, 33, 0.18);
+        border-radius: 4px;
+        color: var(--accent);
+        background: var(--accent-soft);
+      }
+
+      .brand-mark svg {
+        width: 26px;
+        height: 26px;
+      }
+
+      .brand-copy { min-width: 0; }
+
+      .brand-eyebrow {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--accent);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+      }
+
+      .brand h1 {
+        margin: 0;
+        color: var(--text);
+        font-size: clamp(20px, 3vw, 27px);
+        line-height: 1.15;
+        letter-spacing: -0.045em;
+        font-weight: 700;
+      }
+
+      .brand h1 span {
+        color: var(--accent);
+      }
+
+      .countdown-timer {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        min-width: 210px;
+        padding: 13px 17px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: #ffffff;
+      }
+
+      .timer-indicator {
+        width: 9px;
+        height: 9px;
+        flex: 0 0 auto;
+        margin-left: auto;
+        border-radius: 50%;
+        background: var(--accent);
+      }
+
+      .countdown-label {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--muted);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+      }
+
+      #countdown {
+        color: var(--accent);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 23px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .content {
+        padding: 30px 32px 34px;
+      }
+
+      .input-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 14px;
+      }
+
+      label {
+        display: block;
+        color: var(--text);
+        font-size: 15px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+      }
+
+      .section-hint {
+        margin: 5px 0 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .saved-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        flex: 0 0 auto;
+        padding: 7px 10px;
+        color: var(--accent-bright);
+        border: 1px solid rgba(215, 25, 33, 0.15);
+        border-radius: 3px;
+        background: var(--accent-soft);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+      }
+
+      .saved-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 8px rgba(215, 25, 33, 0.24);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 156px;
+        resize: vertical;
+        padding: 17px 19px;
+        border: 1px solid #cccccc;
+        border-radius: 3px;
+        background: #ffffff;
+        color: #333333;
+        font: 13px/1.8 'JetBrains Mono', monospace;
+        transition: border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--accent);
+        background: #ffffff;
+        box-shadow: 0 0 0 2px rgba(215, 25, 33, 0.12);
+      }
+
+      .mini {
+        display: none;
+        width: min(460px, 100%);
+        grid-template-columns: 1fr 1fr auto;
+        align-items: stretch;
+        overflow: hidden;
+        position: relative;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+      }
+
+      .mini::before {
+        content: '';
+        position: absolute;
+        inset: 0 0 auto;
+        height: 4px;
+        background: var(--accent);
+      }
+
+      .mini-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        min-width: 0;
+        padding: 20px 18px 16px;
+      }
+
+      .mini-item + .mini-item {
+        border-left: 1px solid var(--border);
+      }
+
+      .mini-label {
+        color: var(--muted);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+      }
+
+      .mini-value {
+        color: var(--text);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: clamp(20px, 7vw, 30px);
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+      }
+
+      #mini-left {
+        color: var(--accent);
+      }
+
+      .icon-button {
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 1px solid rgba(215, 25, 33, 0.18);
+        border-radius: 4px;
+        color: var(--accent);
+        background: var(--accent-soft);
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        background: #f5d9dd;
+      }
+
+      .icon-button:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .icon-button svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .mini .icon-button {
+        align-self: center;
+        margin: 4px 14px 0 4px;
+      }
+
+      body.compact {
+        padding: 10px;
+      }
+
+      body.compact .mini {
+        display: grid;
+      }
+
+      body.compact .container {
+        display: none;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      textarea::placeholder {
+        color: #999999;
+      }
+
+      .result {
+        margin-top: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        background: #ffffff;
+      }
+
+      .result:not(:has(table)) {
+        padding: 24px;
+        color: var(--muted);
+        text-align: center;
+        font-size: 13px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-variant-numeric: tabular-nums;
+      }
+
+      th, td {
+        padding: 14px 18px;
+        text-align: left;
+        border-bottom: 1px solid #e5e5e5;
+        color: #333333;
+        font-size: 13px;
+      }
+
+      thead th {
+        padding-top: 13px;
+        padding-bottom: 13px;
+        background: var(--panel-soft);
+        color: #555555;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      tbody tr {
+        transition: background 160ms ease;
+      }
+
+      tbody tr:hover {
+        background: #f9f9f9;
+      }
+
+      tbody td:first-child {
+        width: 54px;
+        color: #888888;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+      }
+
+      tfoot td {
+        background: #fcf4f5;
+        color: #333333;
+        font-size: 12px;
+        border-bottom: 1px solid #eeeeee;
+      }
+
+      tfoot tr:first-child td {
+        border-top: 1px solid rgba(215, 25, 33, 0.18);
+      }
+
+      tfoot td:first-child {
+        width: 190px;
+        color: #555555;
+      }
+
+      tfoot td[colspan="2"] {
+        color: var(--accent-bright);
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+      }
+
+      tr:last-child td { border-bottom: none; }
+
+      @media (max-width: 620px) {
+        body {
+          padding: 16px 12px;
+        }
+
+        .container {
+          border-radius: 4px;
+        }
+
+        .header {
+          padding: 22px 20px;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 20px;
+        }
+
+        .countdown-timer {
+          min-width: 0;
+          align-self: flex-start;
+        }
+
+        .content {
+          padding: 24px 20px 22px;
+        }
+
+        .input-heading {
+          align-items: flex-start;
+        }
+
+        textarea {
+          min-height: 140px;
+          padding: 14px;
+          font-size: 12px;
+        }
+
+        th, td {
+          padding: 12px 10px;
+          font-size: 12px;
+        }
+
+        tfoot td:first-child {
+          width: 145px;
+        }
+
+        .result:not(:has(table)) {
+          padding: 20px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .brand {
+          gap: 11px;
+        }
+
+        .brand-mark {
+          width: 44px;
+          height: 44px;
+          border-radius: 14px;
+        }
+
+        .saved-badge {
+          font-size: 8px;
+          padding: 6px 8px;
+        }
+
+        tfoot td:first-child {
+          width: 125px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="compact">
+    <section class="mini" aria-label="Today at a glance">
+      <div class="mini-item">
+        <span class="mini-label">TIME LEFT</span>
+        <span id="mini-left" class="mini-value">--:--:--</span>
+      </div>
+      <div class="mini-item">
+        <span class="mini-label">EXIT AT</span>
+        <span id="mini-exit" class="mini-value">--:--</span>
+      </div>
+      <button id="edit-button" class="icon-button" type="button" title="Edit attendance" aria-label="Edit attendance">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 20h4L18.5 9.5a2.1 2.1 0 0 0-4-4L4 16v4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" />
+          <path d="m13.5 6.5 4 4" stroke="currentColor" stroke-width="1.7" />
+        </svg>
+      </button>
+    </section>
+    <div class="container">
+      <div class="header">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5" />
+              <path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M4.5 5.5 6 7M19.5 5.5 18 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+          </span>
+          <div class="brand-copy">
+            <span class="brand-eyebrow">PERSONAL TIMEKEEPER</span>
+            <h1>In Time <span>Calculation</span></h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <div class="countdown-timer">
+            <div>
+              <span class="countdown-label">TIME REMAINING</span>
+              <span id="countdown">00:00</span>
+            </div>
+            <span class="timer-indicator" aria-hidden="true"></span>
+          </div>
+          <button id="compact-button" class="icon-button" type="button" title="Show compact widget" aria-label="Show compact widget">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="input-heading">
+          <div>
+            <label for="message">Attendance log</label>
+            <p class="section-hint">Paste timestamps in order. Your entries are saved and restored automatically.</p>
+          </div>
+          <span class="saved-badge">AUTO-SAVED</span>
+        </div>
+        <textarea id="message" placeholder="16/09/2026 07:39:30   (EEC-GF)	16/09/2026 14:51:13   (EEC-GF)	
+16/09/2026 14:56:38   (EEC-GF)"></textarea>
+        <div id="result" class="result">No data yet.</div>
+      </div>
+    </div>
+
+    <script>
+      const textarea = document.getElementById('message');
+      const resultBox = document.getElementById('result');
+      const countdownDisplay = document.getElementById('countdown');
+      const miniLeft = document.getElementById('mini-left');
+      const miniExit = document.getElementById('mini-exit');
+      const DATE_MATCHER = /\b(?:\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}|\d{2}-\d{2}-\d{2}\s+\d{1,2}:\d{2}:\d{2}\s*[AP]M|\d{1,2}:\d{2})\b/gi;
+      const STORAGE_KEY = 'attendanceLog';
+
+      // Countdown timer functionality
+      let countdownInterval;
+      
+      const startCountdown = (durationSeconds) => {
+        clearInterval(countdownInterval);
+        let remainingSeconds = durationSeconds;
+        
+        const updateCountdown = () => {
+          const hours = Math.floor(remainingSeconds / 3600);
+          const minutes = Math.floor((remainingSeconds % 3600) / 60);
+          const seconds = remainingSeconds % 60;
+          const pad = (value) => String(value).padStart(2, '0');
+          countdownDisplay.textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+          miniLeft.textContent = countdownDisplay.textContent;
+          
+          if (remainingSeconds > 0) {
+            remainingSeconds--;
+          } else {
+            clearInterval(countdownInterval);
+            countdownDisplay.textContent = '00:00:00';
+            miniLeft.textContent = '00:00:00';
+          }
+        };
+        
+        updateCountdown();
+        countdownInterval = setInterval(updateCountdown, 1000);
+      };
+
+      // Start with a default countdown
+      startCountdown(480); // 8 hours = 28800 seconds (default work day)
+
+      const parseDateTime = (value) => {
+        const timeOnly = value.match(/^(\d{1,2}):(\d{2})$/);
+        if (timeOnly) {
+          const [, hour, minute] = timeOnly;
+          const today = new Date();
+          return new Date(today.getFullYear(), today.getMonth(), today.getDate(), Number(hour), Number(minute));
+        }
+
+        const slashDate = value.match(/^(\d{2})\/(\d{2})\/(\d{4})\s+(\d{2}):(\d{2}):(\d{2})$/);
+        if (slashDate) {
+          const [, day, month, year, hour, minute, second] = slashDate;
+          return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute), Number(second));
+        }
+
+        const dashDate = value.match(/^(\d{2})-(\d{2})-(\d{2})\s+(\d{1,2}):(\d{2}):(\d{2})\s*([AP]M)$/i);
+        if (!dashDate) return null;
+
+        const [, day, month, year, hour, minute, second, meridiem] = dashDate;
+        const hour24 = Number(hour) % 12 + (meridiem.toUpperCase() === 'PM' ? 12 : 0);
+        return new Date(2000 + Number(year), Number(month) - 1, Number(day), hour24, Number(minute), Number(second));
+      };
+
+      const formatDateTimeForDisplay = (date) => {
+        const pad = (value) => String(value).padStart(2, '0');
+        return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+      };
+
+      const diffSeconds = (startValue, endValue) => {
+        const startDate = parseDateTime(startValue);
+        const endDate = parseDateTime(endValue);
+        if (!startDate || !endDate) return 0;
+        return Math.max(0, (endDate.getTime() - startDate.getTime()) / 1000);
+      };
+
+      const diffMinutes = (startValue, endValue) => diffSeconds(startValue, endValue) / 60;
+
+      const getOutElapsedSeconds = (rows) => rows.slice(1).reduce((total, row, index) => {
+        const previousOut = rows[index].outTime;
+        return total + diffSeconds(previousOut, row.inTime);
+      }, 0);
+
+      const getExpectedTargetMinutes = (dateValue) => {
+        const date = parseDateTime(dateValue);
+        if (!date) return 510;
+        return date.getDay() === 5 ? 480 : 510;
+      };
+
+      const getRequiredLastOut = (rows) => {
+        if (!rows.length) return null;
+
+        const firstIn = parseDateTime(rows[0].inTime);
+        if (!firstIn) return null;
+
+        const totalOutSeconds = getOutElapsedSeconds(rows);
+        const adjustedOutSeconds = firstIn.getDay() === 5 ? Math.max(0, totalOutSeconds - 90 * 60) : totalOutSeconds;
+        const targetMinutes = getExpectedTargetMinutes(rows[0].inTime);
+        const requiredOut = new Date(firstIn.getTime() + adjustedOutSeconds * 1000 + targetMinutes * 60000);
+        return formatDateTimeForDisplay(requiredOut);
+      };
+
+      const parseInOut = (text) => {
+        const matches = [...text.matchAll(DATE_MATCHER)].map((match) => match[0]);
+        if (!matches.length) return [];
+
+        const rows = [];
+        const now = new Date();
+
+        for (let index = 0; index < matches.length; index += 1) {
+          if (index % 2 !== 0) continue;
+
+          const inTime = matches[index];
+          const outTime = matches[index + 1] || formatDateTimeForDisplay(now);
+          rows.push({
+            inTime,
+            outTime,
+            showOut: matches[index + 1] ? matches[index + 1] : '-'
+          });
+        }
+
+        return rows;
+      };
+
+      const formatSummary = (totalSeconds) => {
+        const sign = totalSeconds < 0 ? '-' : '';
+        const absoluteSeconds = Math.abs(totalSeconds);
+        const hours = Math.floor(absoluteSeconds / 3600);
+        const minutes = Math.floor((absoluteSeconds % 3600) / 60);
+        const seconds = absoluteSeconds % 60;
+        return `${sign}${hours}h ${minutes}m ${seconds}s`;
+      };
+
+      const updateResult = () => {
+        const text = textarea.value.trim();
+        miniExit.textContent = '--:--';
+        if (!text) {
+          resultBox.innerHTML = 'No data yet.';
+          return;
+        }
+
+        const rows = parseInOut(text);
+        if (!rows.length) {
+          resultBox.innerHTML = '<div class="result"><strong>No valid in/out timestamps found.</strong></div>';
+          return;
+        }
+
+        const tableRows = rows
+          .map((row, index) => `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${row.inTime}</td>
+              <td>${row.showOut}</td>
+            </tr>
+          `)
+          .join('');
+
+        const totalInSeconds = rows.reduce((total, row) => total + diffSeconds(row.inTime, row.outTime), 0);
+        const totalOutSeconds = getOutElapsedSeconds(rows);
+        const requiredLastOut = getRequiredLastOut(rows);
+        if (requiredLastOut) miniExit.textContent = requiredLastOut.slice(11, 16);
+        const expectedTargetMinutes = getExpectedTargetMinutes(rows[0].inTime);
+        const expectedHours = Math.floor(expectedTargetMinutes / 60);
+        const expectedMinutes = expectedTargetMinutes % 60;
+
+        // Update countdown with remaining time
+        const remainingSeconds = Math.max(0, expectedTargetMinutes * 60 - totalInSeconds);
+        startCountdown(remainingSeconds);
+
+        resultBox.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>In</th>
+                <th>Out</th>
+              </tr>
+            </thead>
+            <tbody>${tableRows}</tbody>
+            <tfoot>
+              <tr>
+                <td><strong>Total In Time</strong></td>
+                <td colspan="2">${formatSummary(totalInSeconds)}</td>
+              </tr>
+              <tr>
+                <td><strong>Total Out Time</strong></td>
+                <td colspan="2">${formatSummary(totalOutSeconds)}</td>
+              </tr>
+              <tr>
+                <td><strong>Expected</strong></td>
+                <td colspan="2">${expectedHours}h ${expectedMinutes}m</td>
+              </tr>
+              <tr>
+                <td><strong>Required Last Out</strong></td>
+                <td colspan="2">${requiredLastOut || 'N/A'}</td>
+              </tr>
+            </tfoot>
+          </table>
+        `;
+      };
+
+      textarea.addEventListener('input', () => {
+        localStorage.setItem(STORAGE_KEY, textarea.value);
+        updateResult();
+      });
+      textarea.addEventListener('paste', () => setTimeout(updateResult, 10));
+      const setCompact = (compact) => {
+        document.body.classList.toggle('compact', compact);
+        if (!compact) textarea.focus();
+      };
+      document.getElementById('edit-button').addEventListener('click', () => setCompact(false));
+      document.getElementById('compact-button').addEventListener('click', () => setCompact(true));
+      // Recalculate when returning to the window so open sessions and time-only entries stay current.
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) updateResult();
+      });
+
+      textarea.value = localStorage.getItem(STORAGE_KEY) || '';
+      updateResult();
+    </script>
+  </body>
 </html>
