@@ -366,7 +366,7 @@
       }
       .settings-row {
         display: grid;
-        grid-template-columns: minmax(96px, 0.85fr) repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(96px, 0.85fr) repeat(3, minmax(0, 1fr));
         align-items: center;
         gap: 12px;
         padding: 11px 14px;
@@ -699,7 +699,7 @@
             <h2 id="settings-title">Weekday settings</h2>
           </div>
         </div>
-        <p class="section-hint settings-description">Enter hours from 0 to 24 as decimals, such as 6.5 for 6 hours 30 minutes. Allowed out time sets the minimum elapsed time; extra out time extends the required exit.</p>
+        <p class="section-hint settings-description">Enter hours from 0 to 24 as decimals, such as 6.5 for 6 hours 30 minutes. For each day, the Total Time defaults to In Time + Allowed Out. Allowed out time sets the minimum elapsed time; extra out time extends the required exit.</p>
         <div id="settings-grid" class="settings-grid"></div>
         <p id="settings-error" class="settings-error" role="alert"></p>
         <div class="settings-actions">
@@ -722,7 +722,8 @@
       const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
       const defaultSettings = weekdays.map((day) => ({
         inHours: day === 'Friday' ? 6.5 : 8.5,
-        outHours: day === 'Friday' ? 1.5 : 0
+        outHours: day === 'Friday' ? 1.5 : 0,
+        totalHours: (day === 'Friday' ? 6.5 : 8.5) + (day === 'Friday' ? 1.5 : 0)
       }));
       const settingsDialog = document.getElementById('settings-dialog');
       const settingsForm = document.getElementById('settings-form');
@@ -739,7 +740,11 @@
             !parsed.every((settings) => settings && validHours(settings.inHours) && validHours(settings.outHours))) {
           throw new Error('Invalid saved weekday settings');
         }
-        return parsed;
+        return parsed.map((settings) => ({
+          inHours: settings.inHours,
+          outHours: settings.outHours,
+          totalHours: settings.totalHours !== undefined ? settings.totalHours : settings.inHours + settings.outHours
+        }));
       };
       try {
         weekdaySettings = readSettings(localStorage.getItem(SETTINGS_KEY));
@@ -748,7 +753,9 @@
         settingsLoadError = 'Could not load saved settings. Current values are shown; save them to replace the saved settings.';
       }
 
-      settingsGrid.innerHTML = weekdays.map((day, index) => `
+      settingsGrid.innerHTML = weekdays.map((day, index) => {
+        const defaultTotal = weekdaySettings[index].inHours + weekdaySettings[index].outHours;
+        return `
         <div class="settings-row">
           <div class="settings-day"><span class="settings-day-index" aria-hidden="true">0${index + 1}</span><strong>${day}</strong></div>
           <label for="in-hours-${index}">IN TIME
@@ -763,13 +770,21 @@
               <span class="settings-unit" aria-hidden="true">hrs</span>
             </span>
           </label>
+          <label for="total-hours-${index}">TOTAL TIME
+            <span class="settings-input">
+              <input id="total-hours-${index}" type="text" inputmode="decimal" autocomplete="off" aria-label="${day} total time (hours)" required />
+              <span class="settings-unit" aria-hidden="true">hrs</span>
+            </span>
+          </label>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       document.getElementById('settings-button').addEventListener('click', () => {
         weekdaySettings.forEach((settings, index) => {
           document.getElementById(`in-hours-${index}`).value = settings.inHours;
           document.getElementById(`out-hours-${index}`).value = settings.outHours;
+          document.getElementById(`total-hours-${index}`).value = settings.totalHours;
         });
         settingsError.textContent = settingsLoadError;
         settingsDialog.showModal();
@@ -778,26 +793,34 @@
       settingsForm.addEventListener('submit', (event) => {
         event.preventDefault();
         const updated = [];
+        const readHours = (input) => {
+          const value = input.value.trim();
+          return /^(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) ? Number(value) : NaN;
+        };
+        
         for (let index = 0; index < weekdays.length; index++) {
           const inInput = document.getElementById(`in-hours-${index}`);
           const outInput = document.getElementById(`out-hours-${index}`);
-          const readHours = (input) => {
-            const value = input.value.trim();
-            return /^(?:\d+(?:\.\d+)?|\.\d+)$/.test(value) ? Number(value) : NaN;
-          };
+          const totalInput = document.getElementById(`total-hours-${index}`);
+          
           const inHours = readHours(inInput);
           const outHours = readHours(outInput);
-          if (!validHours(inHours) || !validHours(outHours)) {
-            settingsError.textContent = `${weekdays[index]}: enter hours between 0 and 24 in both fields.`;
-            (!validHours(inHours) ? inInput : outInput).focus();
+          const totalHours = readHours(totalInput);
+          
+          if (!validHours(inHours) || !validHours(outHours) || !validHours(totalHours)) {
+            settingsError.textContent = `${weekdays[index]}: enter hours between 0 and 24 in all fields.`;
+            if (!validHours(inHours)) inInput.focus();
+            else if (!validHours(outHours)) outInput.focus();
+            else totalInput.focus();
             return;
           }
-          updated.push({ inHours, outHours });
+          updated.push({ inHours, outHours, totalHours });
         }
+        
         try {
           localStorage.setItem(SETTINGS_KEY, JSON.stringify(updated));
         } catch (error) {
-          console.error('Could not save weekday settings:', error);
+          console.error('Could not save settings:', error);
           settingsError.textContent = 'Could not save settings. Check browser storage and try again.';
           return;
         }
@@ -991,7 +1014,7 @@
                 <td colspan="2">${formatSummary(totalOutSeconds)}</td>
               </tr>
               <tr>
-                <td><strong>Expected</strong></td>
+                <td><strong>Expected (Daily)</strong></td>
                 <td colspan="2">${formatSummary(expectedSeconds)}</td>
               </tr>
               <tr>
@@ -1046,7 +1069,7 @@
       textarea.addEventListener('paste', () => setTimeout(updateResult, 10));
       window.addEventListener('storage', (event) => {
         if (event.storageArea === localStorage && event.key === STORAGE_DATE_KEY) refreshDay();
-        if (event.storageArea !== localStorage || (event.key !== SETTINGS_KEY && event.key !== null)) return;
+        if (event.storageArea !== localStorage || event.key !== SETTINGS_KEY) return;
         try {
           weekdaySettings = readSettings(event.newValue);
           settingsLoadError = '';
